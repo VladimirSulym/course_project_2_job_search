@@ -1,5 +1,3 @@
-
-
 class Vacancy:
     id: str
     name: str
@@ -8,33 +6,52 @@ class Vacancy:
     snippet: {}
     schedule: str
 
-    def __init__(self, id, name, area, salary, snippet, schedule):
-        self.id = id
-        self.name = name
-        self.area = area
-        if salary:
-            if salary.get('from'):
-                self.salary['from'] = salary['from']
+    def __init__(self, data):
+        self.vacancy = {'id': data.get('id'),
+                        'name': data.get('name'),
+                        'area': data.get('area').get('name'),
+                        'salary': {'from': 0,
+                                   'to': 0,
+                                   'currency': None,
+                                   'gross': None,
+                                   },
+                        'snippet': data.get('snippet'),
+                        'schedule': data.get('schedule').get('name'),
+                        }
+        if data.get('salary'):
+            if data.get('salary').get('from'):
+                self.vacancy['salary']['from'] = data.get('salary').get('from')
             else:
-                self.salary['from'] = 0
-            if salary.get('to'):
-                self.salary['to'] = salary['to']
+                self.vacancy['salary']['from'] = 0
+            if data.get('salary').get('to'):
+                self.vacancy['salary']['to'] = data.get('salary').get('to')
             else:
-                self.salary['to'] = 0
-            self.salary['currency'] = salary['currency']
-            self.salary['gross'] = salary['gross']
-        self.snippet = snippet
-        self.schedule = schedule.get('name')
+                self.vacancy['salary']['to'] = 0
+            self.vacancy['salary']['currency'] = data.get('salary').get('currency')
+            self.vacancy['salary']['gross'] = data.get('salary').get('gross')
 
+    def __str__(self):
+        return (f'ID: {self.vacancy.get("id")}, Название: {self.vacancy.get("name")}\n'
+                f'Регион: {self.vacancy.get("area")}\n'
+                f'Зарплата от: {self.vacancy.get('salary').get('from')}, до: {self.vacancy.get('salary').get('to')} {self.vacancy.get('salary').get('currency')}\n'
+                f'Описание:\n'
+                f'Требования: {self.vacancy.get('snippet').get('requirement')}\n'
+                f'Обязанности: {self.vacancy.get('snippet').get('responsibility')}\n')
+
+    def __lt__(self, other):
+        return self.vacancy.get('salary').get('from') < other.vacancy.get('salary').get('from')
+
+    def __gt__(self, other):
+        return self.vacancy.get('salary').get('from') > other.vacancy.get('salary').get('from')
 
 if __name__ == '__main__':
     vacancy = Vacancy({
         "id": "108472084",
-        "premium": false,
+        "premium": False,
         "name": "Научный сотрудник / Молекулярный биолог",
-        "department": null,
-        "has_test": false,
-        "response_letter_required": false,
+        "department": None,
+        "has_test": False,
+        "response_letter_required": False,
         "area": {
             "id": "1",
             "name": "Москва",
@@ -42,9 +59,9 @@ if __name__ == '__main__':
         },
         "salary": {
             "from": 150000,
-            "to": null,
+            "to": None,
             "currency": "RUR",
-            "gross": true
+            "gross": True
         },
         "type": {
             "id": "open",
@@ -56,7 +73,7 @@ if __name__ == '__main__':
             "building": "8",
             "lat": 55.728317,
             "lng": 37.573815,
-            "description": null,
+            "description": None,
             "raw": "Москва, Трубецкая улица, 8",
             "metro": {
                 "station_name": "Фрунзенская",
@@ -78,14 +95,14 @@ if __name__ == '__main__':
             ],
             "id": "16310690"
         },
-        "response_url": null,
-        "sort_point_distance": null,
+        "response_url": None,
+        "sort_point_distance": None,
         "published_at": "2024-10-10T15:14:21+0300",
         "created_at": "2024-10-10T15:14:21+0300",
-        "archived": false,
+        "archived": False,
         "apply_alternate_url": "https://hh.ru/applicant/vacancy_response?vacancyId=108472084",
-        "show_logo_in_search": null,
-        "insider_interview": null,
+        "show_logo_in_search": None,
+        "insider_interview": None,
         "url": "https://api.hh.ru/vacancies/108472084?host=hh.ru",
         "alternate_url": "https://hh.ru/vacancy/108472084",
         "relations": [],
@@ -100,14 +117,14 @@ if __name__ == '__main__':
                 "90": "https://img.hhcdn.ru/employer-logo/3934931.png"
             },
             "vacancies_url": "https://api.hh.ru/vacancies?employer_id=5454844",
-            "accredited_it_employer": false,
-            "trusted": true
+            "accredited_it_employer": False,
+            "trusted": True
         },
         "snippet": {
             "requirement": "Опыт работы в молекулярно-биологической лаборатории от 5 лет. Глубокое понимание методов молекулярной <highlighttext>биологии</highlighttext>: от фореза до NGS. ",
             "responsibility": "Планирование, проведение и анализ результатов экспериментов. Разработка, оптимизация и валидация NGS-тестов. Тестирование сырья и готовой продукции. Ведение отчетной документации..."
         },
-        "contacts": null,
+        "contacts": None,
         "schedule": {
             "id": "fullDay",
             "name": "Полный день"
@@ -115,14 +132,14 @@ if __name__ == '__main__':
         "working_days": [],
         "working_time_intervals": [],
         "working_time_modes": [],
-        "accept_temporary": false,
+        "accept_temporary": False,
         "professional_roles": [
             {
                 "id": "79",
                 "name": "Научный специалист, исследователь"
             }
         ],
-        "accept_incomplete_resumes": false,
+        "accept_incomplete_resumes": False,
         "experience": {
             "id": "between1And3",
             "name": "От 1 года до 3 лет"
@@ -131,9 +148,11 @@ if __name__ == '__main__':
             "id": "full",
             "name": "Полная занятость"
         },
-        "adv_response_url": null,
-        "is_adv_vacancy": false,
-        "adv_context": null
+        "adv_response_url": None,
+        "is_adv_vacancy": False,
+        "adv_context": None
     })
 
-    print(vacancy.id)
+    # print(vacancy.id)
+    print(vacancy.vacancy)
+    print(vacancy)
