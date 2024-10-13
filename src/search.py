@@ -12,6 +12,7 @@ console_handler.setFormatter(LOG_FORMAT)
 logger.addHandler(console_handler)
 logger.setLevel(LOG_LEVEL)
 
+
 def vacancies_search(dicts_vacancies: list, search_str: str) -> list:
     """Функция принимает список словарей с данными о банковских операциях и строку поиска,
     а возвращать список словарей, у которых есть данные в записях совпадающие с данной строкой. Функция осуществляет
@@ -60,20 +61,20 @@ def vacancies_search(dicts_vacancies: list, search_str: str) -> list:
         return []
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     save_data = SaveDataInJsonFile()
     data_for_filter = save_data.get_data(os.path.join(DATA_PATH, "base_vacancies.json"))
     list_for_search = []
     for i in range(50):
         list_for_search.append(data_for_filter[i])
     print(list_for_search)
-    print(vacancies_search(list_for_search, 'дисциплинированность'))
+    print(vacancies_search(list_for_search, "дисциплинированность"))
     # vacancies_for_processing =[]
     # for i in data_for_filter:
-        # save_data.save_data(Vacancy(i).vacancy)
-        # vacancy = Vacancy(i)
-        # vacancies_for_save.append(vacancy.vacancy)
-        # vacancies_for_processing.append(vacancy)
+    # save_data.save_data(Vacancy(i).vacancy)
+    # vacancy = Vacancy(i)
+    # vacancies_for_save.append(vacancy.vacancy)
+    # vacancies_for_processing.append(vacancy)
     # print(vacancies_for_processing)
     # transaction_search(data_for_filter,"Euro")
     #
