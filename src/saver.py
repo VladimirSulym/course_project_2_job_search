@@ -12,9 +12,9 @@ logger.addHandler(console_handler)
 logger.setLevel(LOG_LEVEL)
 
 
-class FileWork(ABC):
+class WorkingWithFiles(ABC):
     @abstractmethod
-    def get_data(self, path: str) -> dict:
+    def get_data(self, path):
         pass
 
     @abstractmethod
@@ -22,17 +22,22 @@ class FileWork(ABC):
         pass
 
     @abstractmethod
-    def delete_data(self, id):
+    def save_dataset(self, data):
+        pass
+
+    @abstractmethod
+    def delete_data(self, list_delete_id):
         pass
 
 
-class SaveDataInJsonFile(FileWork):
+class SaveDataInJsonFile(WorkingWithFiles):
     file_name = ""
 
     def __init__(self, file_name="base_vacancies.json"):
         SaveDataInJsonFile.file_name = file_name
 
     def get_data(self, path):
+        """Функция выгружает данные из json файла возвращает список объектов"""
         try:
             with open(path, "r") as f:
                 return json.load(f)
@@ -88,7 +93,7 @@ class SaveDataInJsonFile(FileWork):
             print(f"Локальная база обновлена и содержит {len(result_data_for_save)} вакансий")
 
     def delete_data(self, list_delete_id):
-        """Функция удаляет из локальной базу вакансию с заданным ID"""
+        """Функция удаляет из локальной базы вакансии с заданными ID"""
         list_delete_id = list_delete_id.split(",")
         list_delete_id = [i.strip() for i in list_delete_id]
         print(list_delete_id)

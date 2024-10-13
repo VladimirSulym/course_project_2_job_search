@@ -1,11 +1,12 @@
 import logging
 import os
+import re
 
 from config import LOG_FORMAT, LOG_LEVEL, DATA_PATH
 from src.hh_parser import HH
 from src.saver import SaveDataInJsonFile
 from src.search import vacancies_search
-from src.utils import get_len_base, bubble_sort, bubble_sort_area
+from src.utils import get_len_base, bubble_sort, bubble_sort_area, filter_by_salary_range
 from src.vacancy import Vacancy
 
 logger = logging.getLogger(__name__)
@@ -32,14 +33,15 @@ def menu_1(save_data, main_menu, data_load_with_base=None):
             print(f"В локальной базе доступно {len(vacancies)} вакансий")
         print(
             f"1. Выбрать кол-во вакансий выводимых на экран. Установлено {how_much_show}\n"
-            f"2. Отсортировать по ЗП по убыванию\n"
-            f"3. Отсортировать по региону по алфавиту\n"
+            f"2. Отсортировать по все ЗП по убыванию\n"
+            f"3. Отсортировать по все региону по алфавиту\n"
             f"4. Показать ВСЕ\n"
             f"5. ТОП N вакансий по ЗП\n"
-            f"6. Поиск вакансии по ключевым словам"
+            f"6. Поиск вакансии по ключевым словам\n"
+            f"7. Показать вакансии в диапазона зарплат от - до"
         )
         if main_menu == "2":
-            print(f"7. Удаление вакансии из локальной базы")
+            print(f"8. Удаление вакансии из локальной базы")
         print(f"0. Выход в главное меню\n")
         value_menu = input("Введите пункт меню => ")
         match value_menu:
@@ -52,7 +54,7 @@ def menu_1(save_data, main_menu, data_load_with_base=None):
                     temp_show = len(data_from_sort)
                 for i in range(temp_show):
                     print(data_from_sort[i])
-                print(f">>> Получено результатов {len(data_from_sort)} / показано на экран {temp_show}")
+                print(f">>> Получено результатов {len(data_from_sort)} / показано на экран {temp_show}\n")
             case "3":
                 data_from_sort = bubble_sort_area(vacancies)
                 temp_show = how_much_show
@@ -60,7 +62,7 @@ def menu_1(save_data, main_menu, data_load_with_base=None):
                     temp_show = len(data_from_sort)
                 for i in range(temp_show):
                     print(data_from_sort[i])
-                print(f">>> Получено результатов {len(data_from_sort)} / показано на экран {temp_show}")
+                print(f">>> Получено результатов {len(data_from_sort)} / показано на экран {temp_show}\n")
             case "4":
                 for i in vacancies:
                     print(i)
@@ -72,17 +74,29 @@ def menu_1(save_data, main_menu, data_load_with_base=None):
                 for i in range(temp_show):
                     print(data_from_sort[i])
             case "6":
-                # print(vacancies[0])
                 result_for_show: list = vacancies_search(vacancies, input("введите ключевое слово => "))
                 temp_show = how_much_show
                 if len(result_for_show) < temp_show:
                     temp_show = len(result_for_show)
                 for i in range(temp_show):
                     print(result_for_show[i])
-                print(f">>> Получено результатов {len(result_for_show)} / показано на экран {temp_show}")
+                print(f">>> Получено результатов {len(result_for_show)} / показано на экран {temp_show}\n")
             case "7":
+                salary_range = input("Введите диапазон зарплат от - до => ")
+                search_int_list = re.findall(r"\d+\W\d+\W\d+|\d+", salary_range, flags=re.IGNORECASE | re.DOTALL)
+                print(search_int_list)
+                if int(search_int_list[0]) > int(search_int_list[1]):
+                    search_int_list[0], search_int_list[1] = search_int_list[1], search_int_list[0]
+                result_for_show: list = filter_by_salary_range(vacancies, search_int_list[0], search_int_list[1])
+                temp_show = how_much_show
+                if len(result_for_show) < temp_show:
+                    temp_show = len(result_for_show)
+                for i in range(temp_show):
+                    print(result_for_show[i])
+                print(f">>> Получено результатов {len(result_for_show)} / показано на экран {temp_show}\n")
+            case "8":
                 if main_menu == "2":
-                    save_data.delete_data(input("Введите ID для удаления => "))
+                    save_data.delete_data(input("Введите ID для удаления (ввести моно несколько ID через запятую) => "))
                     data_load_with_base = save_data.get_data(os.path.join(DATA_PATH, save_data.file_name))
                     vacancies = []
                     for i in data_load_with_base:

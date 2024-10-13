@@ -39,5 +39,14 @@ def bubble_sort_area(user_list):
     return user_list
 
 
-if __name__ == "__main__":
-    print(bubble_sort([3, 1, 2, 5, 4]))
+def filter_by_salary_range(vacancies, min_salary, max__salary):
+    result_lisr = []
+    logger.debug(min_salary)
+    logger.debug(max__salary)
+    for vacancy in vacancies:
+        if int(min_salary) <= int(vacancy.vacancy.get("salary").get('from')) <= int(max__salary):
+            result_lisr.append(vacancy)
+    return result_lisr
+
+# if __name__ == "__main__":
+#     print(bubble_sort([3, 1, 2, 5, 4]))
