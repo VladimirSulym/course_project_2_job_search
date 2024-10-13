@@ -1,10 +1,16 @@
+import logging
 import os
 import re
 
-from config import DATA_PATH
+from config import DATA_PATH, LOG_FORMAT, LOG_LEVEL
 from src.saver import SaveDataInJsonFile
 from src.vacancy import Vacancy
 
+logger = logging.getLogger(__name__)
+console_handler = logging.StreamHandler()
+console_handler.setFormatter(LOG_FORMAT)
+logger.addHandler(console_handler)
+logger.setLevel(LOG_LEVEL)
 
 def vacancies_search(dicts_vacancies: list, search_str: str) -> list:
     """Функция принимает список словарей с данными о банковских операциях и строку поиска,
@@ -16,19 +22,19 @@ def vacancies_search(dicts_vacancies: list, search_str: str) -> list:
             r"[^\d\W][a-zA-Zа-яА-Я\s]+[^\W\d]|[a-zA-Zа-яА-Я]", search_str, flags=re.IGNORECASE | re.DOTALL
         )
         search_int_list = re.findall(r"\d+\W\d+\W\d+|\d+", search_str, flags=re.IGNORECASE | re.DOTALL)
-        print(search_str_list)
-        print(search_int_list)
+        logger.debug(search_str_list)
+        logger.debug(search_int_list)
         result = []
         for dict_trans in dicts_vacancies:
-            for key, value in dict_trans.items():
+            for key, value in dict_trans.vacancy.items():
                 if search_int_list:
                     for i in search_int_list:
-                        print('i int = ', i)
+                        # print('i int = ', i)
                         if str(value).strip().find(i) != -1:
                             result.append(dict_trans)
                 if search_str_list:
                     for i in search_str_list:
-                        print('i str = ', i)
+                        # print('i str = ', i)
                         if str(value).strip().find(i) != -1:
                             result.append(dict_trans)
         # result_filter = []

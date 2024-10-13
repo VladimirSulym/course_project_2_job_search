@@ -9,14 +9,14 @@ class Vacancy:
     def __init__(self, data):
         self.vacancy = {'id': data.get('id'),
                         'name': data.get('name'),
-                        'area': data.get('area').get('name'),
+                        'area': '',
                         'salary': {'from': 0,
                                    'to': 0,
                                    'currency': None,
                                    'gross': None,
                                    },
                         'snippet': data.get('snippet'),
-                        'schedule': data.get('schedule').get('name'),
+                        'schedule': '',
                         }
         if data.get('salary'):
             if data.get('salary').get('from'):
@@ -29,9 +29,18 @@ class Vacancy:
                 self.vacancy['salary']['to'] = 0
             self.vacancy['salary']['currency'] = data.get('salary').get('currency')
             self.vacancy['salary']['gross'] = data.get('salary').get('gross')
+        if type (data.get('area')) == dict:
+            self.vacancy['area'] = data.get('area').get('name')
+        else:
+            self.vacancy['area'] = data.get('area')
+        if type (data.get('schedule')) == dict:
+            self.vacancy['schedule'] = data.get('schedule').get('name')
+        else:
+            self.vacancy['schedule'] = data.get('schedule')
 
     def __str__(self):
-        return (f'ID: {self.vacancy.get("id")}, Название: {self.vacancy.get("name")}\n'
+        return (f'ID: {self.vacancy.get("id")}\n'
+                f'Название: {self.vacancy.get("name")}\n'
                 f'Регион: {self.vacancy.get("area")}\n'
                 f'Зарплата от: {self.vacancy.get('salary').get('from')}, до: {self.vacancy.get('salary').get('to')} {self.vacancy.get('salary').get('currency')}\n'
                 f'Описание:\n'

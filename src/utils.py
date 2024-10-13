@@ -17,6 +17,7 @@ def get_len_base(file_name):
             return len(json.load(f))
     except FileNotFoundError:
         logger.error(f'Файл с базой вакансий не найден: {path}')
+        return 0
 
 def bubble_sort(user_list):
     n = len(user_list)

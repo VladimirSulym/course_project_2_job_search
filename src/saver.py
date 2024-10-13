@@ -66,38 +66,45 @@ class SaveDataInJsonFile(FileWork):
         базу всеми отсутствующими вакансиями"""
         data_for_comparison = self.get_data(os.path.join(DATA_PATH, SaveDataInJsonFile.file_name))
         result_data_for_save = []
-        print(f'Длина файла {len(data_for_comparison)}')
+        logger.debug(f'Длина файла {len(data_for_comparison)}')
+        logger.debug(f'data = {data[0]}')
         if data_for_comparison:
             result_data_for_save.extend(data_for_comparison)
             for i in data:
                 flag = True
                 for j in data_for_comparison:
-                    if i.get('id') == j.get('id'):
+                    if i.vacancy.get('id') == j.get('id'):
                         flag = False
                 if flag:
-                    result_data_for_save.append(i)
-        else:
-            result_data_for_save.extend(data)
-        print(f'Длина файла {len(result_data_for_save)}')
-        with open(os.path.join(DATA_PATH, SaveDataInJsonFile.file_name), 'w') as f:
-            json.dump(result_data_for_save, f, ensure_ascii=False, indent=4)
-            logger.info("Файл сохранен")
-
-    def delete_data(self, delete_id):
-        """Функция удаляет из локальной базу вакансию с заданным ID"""
-        data_for_delete = self.get_data(os.path.join(DATA_PATH, SaveDataInJsonFile.file_name))
-        result_data_for_save = []
-        logger.debug(f'Длина файла {len(data_for_delete)}')
-        if data_for_delete:
-            for i in data_for_delete:
-                if i.get('id') != str(delete_id):
-                    result_data_for_save.append(i)
-        if data_for_delete == result_data_for_save:
-            print(f'Вакансия с ID {delete_id} не найдена')
+                    result_data_for_save.append(i.vacancy)
+        elif data:
+            for i in data:
+                result_data_for_save.append(i.vacancy)
         logger.debug(f'Длина файла {len(result_data_for_save)}')
         with open(os.path.join(DATA_PATH, SaveDataInJsonFile.file_name), 'w') as f:
             json.dump(result_data_for_save, f, ensure_ascii=False, indent=4)
             logger.info("Файл сохранен")
+            print(f'Локальная база обновлена и содержит {len(result_data_for_save)} вакансий')
+
+    def delete_data(self, list_delete_id):
+        """Функция удаляет из локальной базу вакансию с заданным ID"""
+        list_delete_id = list_delete_id.split(',')
+        list_delete_id = [i.strip() for i in list_delete_id]
+        print(list_delete_id)
+        for delete_id in list_delete_id:
+            data_for_delete = self.get_data(os.path.join(DATA_PATH, SaveDataInJsonFile.file_name))
+            result_data_for_save = []
+            logger.debug(f'Длина файла {len(data_for_delete)}')
+            if data_for_delete:
+                for i in data_for_delete:
+                    if i.get('id') != str(delete_id):
+                        result_data_for_save.append(i)
+            if data_for_delete == result_data_for_save:
+                print(f'Вакансия с ID {delete_id} не найдена')
+            logger.debug(f'Длина файла {len(result_data_for_save)}')
+            with open(os.path.join(DATA_PATH, SaveDataInJsonFile.file_name), 'w') as f:
+                json.dump(result_data_for_save, f, ensure_ascii=False, indent=4)
+                logger.info("Файл сохранен")
 
 
 if __name__ == '__main__':
