@@ -16,7 +16,7 @@ logger.addHandler(console_handler)
 logger.setLevel(LOG_LEVEL)
 
 
-def menu_1(save_data, main_menu, data_load_with_base=None):
+def menu_1(save_data: SaveDataInJsonFile, main_menu: str, data_load_with_base: list) -> None:
     value_menu = ""
     how_much_show = 10
     vacancies = []
@@ -33,15 +33,15 @@ def menu_1(save_data, main_menu, data_load_with_base=None):
             print(f"В локальной базе доступно {len(vacancies)} вакансий")
         print(
             f"1. Выбрать кол-во вакансий выводимых на экран. Установлено {how_much_show}\n"
-            f"2. Отсортировать по все ЗП по убыванию\n"
-            f"3. Отсортировать по все региону по алфавиту\n"
+            f"2. Отсортировать все по ЗП по убыванию\n"
+            f"3. Отсортировать все по региону по алфавиту\n"
             f"4. Показать ВСЕ\n"
             f"5. ТОП N вакансий по ЗП\n"
             f"6. Поиск вакансии по ключевым словам\n"
             f"7. Показать вакансии в диапазона зарплат от - до"
         )
         if main_menu == "2":
-            print(f"8. Удаление вакансии из локальной базы")
+            print(f"8. Удаление вакансии из локальной базы по ID")
         print(f"0. Выход в главное меню\n")
         value_menu = input("Введите пункт меню => ")
         match value_menu:
@@ -84,19 +84,26 @@ def menu_1(save_data, main_menu, data_load_with_base=None):
             case "7":
                 salary_range = input("Введите диапазон зарплат от - до => ")
                 search_int_list = re.findall(r"\d+\W\d+\W\d+|\d+", salary_range, flags=re.IGNORECASE | re.DOTALL)
-                print(search_int_list)
-                if int(search_int_list[0]) > int(search_int_list[1]):
-                    search_int_list[0], search_int_list[1] = search_int_list[1], search_int_list[0]
-                result_for_show: list = filter_by_salary_range(vacancies, search_int_list[0], search_int_list[1])
-                temp_show = how_much_show
-                if len(result_for_show) < temp_show:
-                    temp_show = len(result_for_show)
-                for i in range(temp_show):
-                    print(result_for_show[i])
-                print(f">>> Получено результатов {len(result_for_show)} / показано на экран {temp_show}\n")
+                logger.info(search_int_list)
+                try:
+                    if int(search_int_list[0]) > int(search_int_list[1]):
+                        search_int_list[0], search_int_list[1] = search_int_list[1], search_int_list[0]
+                    result_for_show: list = filter_by_salary_range(vacancies, search_int_list[0], search_int_list[1])
+                    temp_show = how_much_show
+                    if len(result_for_show) < temp_show:
+                        temp_show = len(result_for_show)
+                    for i in range(temp_show):
+                        print(result_for_show[i])
+                    print(f">>> Получено результатов {len(result_for_show)} / показано на экран {temp_show}\n")
+                except IndexError:
+                    print(
+                        "\nОШИБКА! Введены не верные данны!\n" "Необходимо указать диапазон ЗП двумя числами от и до\n"
+                    )
             case "8":
                 if main_menu == "2":
-                    save_data.delete_data(input("Введите ID для удаления (ввести моно несколько ID через запятую) => "))
+                    save_data.delete_data(
+                        input("Введите ID для удаления (ввести можно несколько ID через запятую) => ")
+                    )
                     data_load_with_base = save_data.get_data(os.path.join(DATA_PATH, save_data.file_name))
                     vacancies = []
                     for i in data_load_with_base:
@@ -108,7 +115,7 @@ def menu_1(save_data, main_menu, data_load_with_base=None):
                 print("Нет такого пункта, повторите ввод")
 
 
-def main():
+def main() -> None:
     """Функция, запускающая само приложение выдающая основное меню"""
     main_menu = ""
     save_data = SaveDataInJsonFile()

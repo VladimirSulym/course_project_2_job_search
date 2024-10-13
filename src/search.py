@@ -11,8 +11,9 @@ logger.setLevel(LOG_LEVEL)
 
 
 def vacancies_search(dicts_vacancies: list, search_str: str) -> list:
-    """Функция принимает список словарей с данными и строку поиска,
-    а возвращать список словарей, у которых есть данные в записях совпадающие с данной строкой.
+    """
+    Функция принимает список словарей с данными и строку поиска, а возвращать список словарей,
+    у которых есть данные в записях совпадающие с данной строкой.
     """
     if dicts_vacancies and search_str:
         search_str_list = re.findall(
@@ -53,6 +54,7 @@ def vacancies_search(dicts_vacancies: list, search_str: str) -> list:
         return dicts_vacancies
     else:
         return []
+
 
 # if __name__ == "__main__":
 #     save_data = SaveDataInJsonFile()

@@ -1,7 +1,12 @@
 class Vacancy:
     """Класс для хранения данных о вакансии"""
 
-    def __init__(self, data):
+    __slots__ = "vacancy", "id", "name", "alternate_url"
+
+    def __init__(self, data: dict):
+        self.id = data.get("id")
+        self.name = data.get("name")
+        self.alternate_url = data.get("alternate_url")
         self.vacancy = {
             "id": data.get("id"),
             "name": data.get("name"),
@@ -16,6 +21,9 @@ class Vacancy:
             "snippet": data.get("snippet"),
             "schedule": "",
         }
+        self.__data_validation(data)
+
+    def __data_validation(self, data: dict) -> None:
         if data.get("salary"):
             if data.get("salary").get("from"):
                 self.vacancy["salary"]["from"] = data.get("salary").get("from")
@@ -41,7 +49,8 @@ class Vacancy:
             f'ID: {self.vacancy.get("id")}\n'
             f'Название: {self.vacancy.get("name")}\n'
             f'Регион: {self.vacancy.get("area")}\n'
-            f"Зарплата от: {self.vacancy.get('salary').get('from')}, до: {self.vacancy.get('salary').get('to')} {self.vacancy.get('salary').get('currency')}\n"
+            f"Зарплата от: {self.vacancy.get('salary').get('from')}, до: {self.vacancy.get('salary').get('to')} "
+            f"{self.vacancy.get('salary').get('currency')}\n"
             f"Описание:\n"
             f"Ссылка: {self.vacancy.get('alternate_url')}\n"
             f"Требования: {self.vacancy.get('snippet').get('requirement')}\n"
@@ -53,6 +62,7 @@ class Vacancy:
 
     def __gt__(self, other):
         return self.vacancy.get("salary").get("from") > other.vacancy.get("salary").get("from")
+
 
 # if __name__ == "__main__":
 #     vacancy = Vacancy(
@@ -120,8 +130,12 @@ class Vacancy:
 #                 "trusted": True,
 #             },
 #             "snippet": {
-#                 "requirement": "Опыт работы в молекулярно-биологической лаборатории от 5 лет. Глубокое понимание методов молекулярной <highlighttext>биологии</highlighttext>: от фореза до NGS. ",
-#                 "responsibility": "Планирование, проведение и анализ результатов экспериментов. Разработка, оптимизация и валидация NGS-тестов. Тестирование сырья и готовой продукции. Ведение отчетной документации...",
+#                 "requirement": ("Опыт работы в молекулярно-биологической лаборатории от 5 лет. Глубокое "
+#                                 "понимание методов молекулярной <highlighttext>биологии</highlighttext>: от "
+#                                 "фореза до NGS. "),
+#                 "responsibility": ("Планирование, проведение и анализ результатов экспериментов. Разработка, "
+#                                    "оптимизация и валидация NGS-тестов. Тестирование сырья и готовой продукции. "
+#                                    "Ведение отчетной документации..."),
 #             },
 #             "contacts": None,
 #             "schedule": {"id": "fullDay", "name": "Полный день"},

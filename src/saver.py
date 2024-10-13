@@ -13,6 +13,8 @@ logger.setLevel(LOG_LEVEL)
 
 
 class WorkingWithFiles(ABC):
+    """Абстрактный класс для работы с файлами"""
+
     @abstractmethod
     def get_data(self, path):
         pass
@@ -31,12 +33,16 @@ class WorkingWithFiles(ABC):
 
 
 class SaveDataInJsonFile(WorkingWithFiles):
-    file_name = ""
+    __file_name = ""
 
-    def __init__(self, file_name="base_vacancies.json"):
-        SaveDataInJsonFile.file_name = file_name
+    def __init__(self, file_name: str = "base_vacancies.json"):
+        SaveDataInJsonFile.__file_name = file_name
 
-    def get_data(self, path):
+    @property
+    def file_name(self):
+        return self.__file_name
+
+    def get_data(self, path: str) -> list:
         """Функция выгружает данные из json файла возвращает список объектов"""
         try:
             with open(path, "r") as f:
@@ -45,10 +51,12 @@ class SaveDataInJsonFile(WorkingWithFiles):
             logger.error(f"Файл с базой вакансий не найден: {path}")
             return []
 
-    def save_data(self, data):
-        """Функция получает словарь с вакансией, проверяет его с существующей локальной базой и заполняет
-        базу всеми отсутствующими вакансиями"""
-        data_for_comparison = self.get_data(os.path.join(DATA_PATH, SaveDataInJsonFile.file_name))
+    def save_data(self, data: list) -> None:
+        """
+        Функция получает словарь с вакансией, проверяет его с существующей локальной базой и заполняет
+        базу всеми отсутствующими вакансиями
+        """
+        data_for_comparison = self.get_data(os.path.join(DATA_PATH, SaveDataInJsonFile.__file_name))
         result_data_for_save = []
         logger.debug(f"Длина файла {len(data_for_comparison)}")
         if data_for_comparison:
@@ -62,16 +70,17 @@ class SaveDataInJsonFile(WorkingWithFiles):
         else:
             result_data_for_save.append(data)
         logger.debug(f"Длина файла {len(result_data_for_save)}")
-        with open(os.path.join(DATA_PATH, SaveDataInJsonFile.file_name), "w") as f:
+        with open(os.path.join(DATA_PATH, SaveDataInJsonFile.__file_name), "w") as f:
             json.dump(result_data_for_save, f, ensure_ascii=False, indent=4)
             logger.info("Файл сохранен")
 
-    def save_dataset(self, data):
-        """Функция получает список словарей с вакансиями, проверяет его с существующей локальной базой и заполняет
-        базу всеми отсутствующими вакансиями"""
-        data_for_comparison = self.get_data(os.path.join(DATA_PATH, SaveDataInJsonFile.file_name))
+    def save_dataset(self, data: list) -> None:
+        """
+        Функция получает список словарей с вакансиями, проверяет его с существующей локальной базой и заполняет
+        базу всеми отсутствующими вакансиями
+        """
+        data_for_comparison = self.get_data(os.path.join(DATA_PATH, SaveDataInJsonFile.__file_name))
         result_data_for_save = []
-        print(data)
         logger.debug(f"Длина файла {len(data_for_comparison)}")
         if data_for_comparison:
             result_data_for_save.extend(data_for_comparison)
@@ -84,21 +93,20 @@ class SaveDataInJsonFile(WorkingWithFiles):
                     result_data_for_save.append(i.vacancy)
         elif data:
             for i in data:
-                print(i.vacancy)
                 result_data_for_save.append(i.vacancy)
         logger.debug(f"Длина файла {len(result_data_for_save)}")
-        with open(os.path.join(DATA_PATH, SaveDataInJsonFile.file_name), "w") as f:
+        with open(os.path.join(DATA_PATH, SaveDataInJsonFile.__file_name), "w") as f:
             json.dump(result_data_for_save, f, ensure_ascii=False, indent=4)
             logger.info("Файл сохранен")
             print(f"Локальная база обновлена и содержит {len(result_data_for_save)} вакансий")
 
-    def delete_data(self, list_delete_id):
+    def delete_data(self, list_delete_id: list) -> None:
         """Функция удаляет из локальной базы вакансии с заданными ID"""
         list_delete_id = list_delete_id.split(",")
         list_delete_id = [i.strip() for i in list_delete_id]
         print(list_delete_id)
         for delete_id in list_delete_id:
-            data_for_delete = self.get_data(os.path.join(DATA_PATH, SaveDataInJsonFile.file_name))
+            data_for_delete = self.get_data(os.path.join(DATA_PATH, SaveDataInJsonFile.__file_name))
             result_data_for_save = []
             logger.debug(f"Длина файла {len(data_for_delete)}")
             if data_for_delete:
@@ -108,11 +116,11 @@ class SaveDataInJsonFile(WorkingWithFiles):
             if data_for_delete == result_data_for_save:
                 print(f"Вакансия с ID {delete_id} не найдена")
             logger.debug(f"Длина файла {len(result_data_for_save)}")
-            with open(os.path.join(DATA_PATH, SaveDataInJsonFile.file_name), "w") as f:
+            with open(os.path.join(DATA_PATH, SaveDataInJsonFile.__file_name), "w") as f:
                 json.dump(result_data_for_save, f, ensure_ascii=False, indent=4)
                 logger.info("Файл сохранен")
 
 
-if __name__ == "__main__":
-    test = SaveDataInJsonFile("temp121.json")
-    print(test.get_data())
+# if __name__ == "__main__":
+#     test = SaveDataInJsonFile("temp121.json")
+#     print(test.get_data())

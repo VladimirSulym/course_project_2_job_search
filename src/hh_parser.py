@@ -25,28 +25,32 @@ class HH(Parser):
     """
 
     def __init__(self):
-        self.url = "https://api.hh.ru/vacancies"
-        self.headers = {"User-Agent": "HH-User-Agent"}
-        self.params = {"text": "", "page": 0, "per_page": 100}
-        self.vacancies = []
+        self.__url = "https://api.hh.ru/vacancies"
+        self.__headers = {"User-Agent": "HH-User-Agent"}
+        self.__params = {"text": "", "page": 0, "per_page": 100}
+        self.__vacancies = []
         self.vacancies_cont = 0
 
-    def load_vacancies(self, keyword):
+    def __api_connection(self):
+        response = requests.get(self.__url, headers=self.__headers, params=self.__params)
+        logger.debug(f"Статус код - {response.status_code}")
+        logger.debug(f"Количество найденных вакансий {response.json()['found']}")
+        return response
+
+    def load_vacancies(self, keyword: str) -> list:
         """Функция получает на вход слово для поиска на сайте hh и список словарей с вакансиями"""
-        self.params["text"] = keyword
+        self.__params["text"] = keyword
         pages_count = 20
-        while self.params.get("page") < pages_count:
-            response = requests.get(self.url, headers=self.headers, params=self.params)
-            logger.debug(f"Статус код - {response.status_code}")
-            logger.debug(f"Количество найденных вакансий {response.json()['found']}")
+        while self.__params.get("page") < pages_count:
+            response = self.__api_connection()
             self.vacancies_cont = response.json()["found"]
             if response.json()["pages"] < pages_count:
                 logger.debug(f"Кол-во страниц {response.json()['pages']} - меньше 20")
                 pages_count = response.json()["pages"]
             vacancies = response.json()["items"]
-            self.vacancies.extend(vacancies)
-            self.params["page"] += 1
-        return self.vacancies
+            self.__vacancies.extend(vacancies)
+            self.__params["page"] += 1
+        return self.__vacancies
 
 
 # if __name__ == '__main__':
