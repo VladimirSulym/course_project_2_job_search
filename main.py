@@ -5,6 +5,7 @@ from numpy.ma.core import count
 from config import LOG_FORMAT, LOG_LEVEL
 from src.hh_parser import HH
 from src.saver import SaveDataInJsonFile
+from src.search import vacancies_search
 from src.utils import get_len_base, bubble_sort, bubble_sort_area
 from src.vacancy import Vacancy
 
@@ -46,7 +47,8 @@ def menu_1(vacancies):
                 for i in range(n):
                     print(data_from_sort[i])
             case '6':
-                pass
+                print(vacancies)
+                vacancies_search(vacancies, 'биолог')
             case '0':
                 pass
             case _:
