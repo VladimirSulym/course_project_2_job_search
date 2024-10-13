@@ -100,7 +100,7 @@ class SaveDataInJsonFile(WorkingWithFiles):
             logger.info("Файл сохранен")
             print(f"Локальная база обновлена и содержит {len(result_data_for_save)} вакансий")
 
-    def delete_data(self, list_delete_id: list) -> None:
+    def delete_data(self, list_delete_id: str) -> None:
         """Функция удаляет из локальной базы вакансии с заданными ID"""
         list_delete_id = list_delete_id.split(",")
         list_delete_id = [i.strip() for i in list_delete_id]

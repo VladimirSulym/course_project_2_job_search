@@ -2,11 +2,12 @@ import logging
 import os
 import re
 
-from config import LOG_FORMAT, LOG_LEVEL, DATA_PATH
+from config import DATA_PATH, LOG_FORMAT, LOG_LEVEL
 from src.hh_parser import HH
 from src.saver import SaveDataInJsonFile
 from src.search import vacancies_search
-from src.utils import get_len_base, bubble_sort, bubble_sort_area, filter_by_salary_range
+from src.utils import (bubble_sort, bubble_sort_area, filter_by_salary_range,
+                       get_len_base)
 from src.vacancy import Vacancy
 
 logger = logging.getLogger(__name__)
