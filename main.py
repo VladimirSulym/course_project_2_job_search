@@ -146,6 +146,5 @@ def main() -> None:
             case _:
                 print("Нет такого пункта, повторите ввод")
 
-
 if __name__ == "__main__":
     main()
