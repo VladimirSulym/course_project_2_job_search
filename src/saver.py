@@ -104,7 +104,7 @@ class SaveDataInJsonFile(WorkingWithFiles):
         """Функция удаляет из локальной базы вакансии с заданными ID"""
         list_delete_id = list_delete_id.split(",")
         list_delete_id = [i.strip() for i in list_delete_id]
-        print(list_delete_id)
+        logger.info(list_delete_id)
         for delete_id in list_delete_id:
             data_for_delete = self.get_data(os.path.join(DATA_PATH, SaveDataInJsonFile.__file_name))
             result_data_for_save = []
